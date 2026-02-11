@@ -1,36 +1,67 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Golden Rama Tours & Travel - Landing Page & Chatbot
 
-## Getting Started
+A modern, high-performance landing page for Golden Rama Tours & Travel, featuring an AI-powered travel assistant chatbot.
 
-First, run the development server:
+## Tech Stack
+- **Framework:** Next.js 15 (App Router)
+- **Styling:** Tailwind CSS + Shadcn UI
+- **Choice of AI:** Vercel AI SDK + OpenRouter (Gemini 2.0 Flash)
+- **Database:** PostgreSQL (via Docker)
+- **ORM:** Drizzle ORM
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Prerequisites
+- Node.js 18+
+- Docker Desktop (must be running)
+- OpenRouter API Key
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Setup Instructions
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1.  **Environment Setup**
+    - Rename `.env.example` to `.env` (or create it) with the following:
+      ```env
+      DATABASE_URL=postgresql://postgres:postgres@localhost:5433/goldenrama_db
+      OPENROUTER_API_KEY=your_api_key_here
+      ```
+    - Also ensure `.env.local` exists for Next.js with the same values.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+2.  **Start Database**
+    ```bash
+    docker compose up -d
+    ```
 
-## Learn More
+3.  **Install Dependencies**
+    ```bash
+    npm install
+    ```
 
-To learn more about Next.js, take a look at the following resources:
+4.  **Database Setup (Schema & Seed)**
+    Run the following commands to generate schema and seed the database with tour packages:
+    ```bash
+    npm run db:generate
+    npm run db:migrate
+    npm run db:seed
+    ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+5.  **Run Development Server**
+    ```bash
+    npm run dev
+    ```
+    Open [http://localhost:3000](http://localhost:3000).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Features
+- **Modern UI:** Responsive design with "wow" factor aesthetics.
+- **AI Chatbot:** Floating action button opens a chat assistant that can:
+  - Search for tours (Winter, Beach, Popular, etc.)
+  - Recommend packages with real-time DB data.
+  - Capture leads (Name + WhatsApp) and generating WhatsApp deep links.
+- **Dynamic Content:** Partner logos, tour cards, and testimonials.
 
-## Deploy on Vercel
+## Project Structure
+- `/src/components/landing`: Landing page sections (Hero, Spotlight, Footer...).
+- `/src/components/chat`: Chat window and AI interaction logic.
+- `/src/app/api/chat`: AI backend route (Edge Runtime).
+- `/src/db`: Drizzle ORM schema, config, and seed script.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Troubleshooting
+- **Database Connection Error:** Ensure Docker is running and port 5433 is available.
+- **AI Not Responding:** Check your `OPENROUTER_API_KEY` and internet connection.
