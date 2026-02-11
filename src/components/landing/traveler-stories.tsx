@@ -18,7 +18,7 @@ const testimonials = [
         id: 2,
         author: "Sarah Jenkins",
         location: "Bali Escapade 2023",
-        quote: "Golden Rama curated the perfect honeymoon. Every hotel was a dream come true.",
+        quote: "UpRev Tours curated the perfect honeymoon. Every hotel was a dream come true.",
         image: "https://static.saltinourhair.com/wp-content/uploads/2023/02/09142316/sidemen-bali-17.jpg", // Placeholder
     },
     {

@@ -28,13 +28,33 @@ const safeParse = (str: string) => {
 
 export function ChatWindow({ isOpen, onClose }: ChatWindowProps) {
     const [input, setInput] = useState("");
-    const { messages, sendMessage, status } = useChat({
+    const [historyLoaded, setHistoryLoaded] = useState(false);
+
+    const { messages, sendMessage, status, setMessages } = useChat({
         // Default API endpoint is /api/chat
     });
 
     const isLoading = status === "streaming" || status === "submitted";
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
+
+    // Load conversation history on mount
+    useEffect(() => {
+        if (!historyLoaded) {
+            fetch("/api/chat/history")
+                .then((res) => res.json())
+                .then((history) => {
+                    if (history && history.length > 0) {
+                        setMessages(history);
+                    }
+                    setHistoryLoaded(true);
+                })
+                .catch((err) => {
+                    console.error("Failed to load history:", err);
+                    setHistoryLoaded(true);
+                });
+        }
+    }, [historyLoaded, setMessages]);
 
     // Auto-scroll logic
     useEffect(() => {
@@ -183,7 +203,7 @@ export function ChatWindow({ isOpen, onClose }: ChatWindowProps) {
                         <Bot className="h-5 w-5 text-[#D4AF37]" />
                     </div>
                     <div>
-                        <h3 className="text-white font-semibold text-sm"> Golden Rama Assistant </h3>
+                        <h3 className="text-white font-semibold text-sm">UpRev Assistant</h3>
                         <div className="flex items-center gap-1.5">
                             <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
                             <span className="text-white/60 text-xs">Online</span>

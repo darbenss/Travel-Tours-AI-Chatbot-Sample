@@ -15,7 +15,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Golden Rama Tours & Travel - Seamless Luxury & Trusted Exploration",
+  title: "UpRev Tours - Seamless Luxury & Trusted Exploration",
   description: "Experience the world with Indonesia's most trusted travel partner since 1971.",
 };
 

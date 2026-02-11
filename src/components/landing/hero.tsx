@@ -25,7 +25,7 @@ export function Hero() {
             <div className="absolute inset-0 z-0">
                 <img
                     src="/670e2382-8fe0-49b8-a8d5-3105891ce913-Vienna.webp"
-                    alt="Golden Rama Travel Hero Background - Vienna"
+                    alt="UpRev Tours Hero Background - Vienna"
                     className="h-full w-full object-cover"
                 />
                 {/* Overlay */}

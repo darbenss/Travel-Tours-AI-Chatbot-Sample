@@ -15,6 +15,12 @@ export const bookingStatusEnum = pgEnum("booking_status", [
     "cancelled",
 ]);
 
+export const messageRoleEnum = pgEnum("message_role", [
+    "user",
+    "assistant",
+    "system",
+]);
+
 // Tours Table
 export const tours = pgTable("tours", {
     id: serial("id").primaryKey(),
@@ -40,8 +46,32 @@ export const bookings = pgTable("bookings", {
     createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
+// Conversations Table
+export const conversations = pgTable("conversations", {
+    id: serial("id").primaryKey(),
+    sessionId: text("session_id").notNull().unique(), // From cookie
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+// Messages Table
+export const messages = pgTable("messages", {
+    id: serial("id").primaryKey(),
+    conversationId: integer("conversation_id")
+        .notNull()
+        .references(() => conversations.id, { onDelete: "cascade" }),
+    role: messageRoleEnum("role").notNull(),
+    content: text("content").notNull(),
+    toolInvocations: text("tool_invocations"), // JSON string of tool calls
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
 // Type exports
 export type Tour = typeof tours.$inferSelect;
 export type InsertTour = typeof tours.$inferInsert;
 export type Booking = typeof bookings.$inferSelect;
 export type InsertBooking = typeof bookings.$inferInsert;
+export type Conversation = typeof conversations.$inferSelect;
+export type InsertConversation = typeof conversations.$inferInsert;
+export type Message = typeof messages.$inferSelect;
+export type InsertMessage = typeof messages.$inferInsert;

@@ -1,6 +1,6 @@
-# Golden Rama Tours & Travel - Landing Page & Chatbot
+# UpRev Tours - Landing Page & Chatbot
 
-A modern, high-performance landing page for Golden Rama Tours & Travel, featuring an AI-powered travel assistant chatbot.
+A modern, high-performance landing page for UpRev Tours, featuring an AI-powered travel assistant chatbot.
 
 ## Tech Stack
 - **Framework:** Next.js 15 (App Router)

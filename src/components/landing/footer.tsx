@@ -15,8 +15,8 @@ export function Footer() {
                     <div className="flex flex-col space-y-6">
                         <Link href="/">
                             <img
-                                src="https://tour-asset.goldenrama.com/50f07de9-edde-4592-9c7a-7fceaca73aa6-logo-golden-rama-color.svg"
-                                alt="Golden Rama Tours & Travel"
+                                src="/uprev-logo.png"
+                                alt="UpRev Tours"
                                 className="h-12 w-auto object-contain"
                             />
                         </Link>
@@ -76,7 +76,7 @@ export function Footer() {
                 </div>
 
                 <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-gray-500">
-                    <p>© {new Date().getFullYear()} Golden Rama Tours & Travel. All rights reserved.</p>
+                    <p>© {new Date().getFullYear()} UpRev Tours. All rights reserved.</p>
                     <div className="flex space-x-6 mt-4 md:mt-0">
                         <Link href="#" className="hover:text-white transition-colors">Privacy Policy</Link>
                         <Link href="#" className="hover:text-white transition-colors">Sitemap</Link>

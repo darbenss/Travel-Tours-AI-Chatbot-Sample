@@ -28,7 +28,7 @@ export function GoldenDifference() {
             <div className="container mx-auto px-6">
                 <div className="text-center mb-16">
                     <h2 className="text-3xl font-serif font-bold text-gray-900 md:text-5xl mb-6">
-                        Why Travel with Golden Rama?
+                        Why Travel with UpRev Tours?
                     </h2>
                     <div className="w-24 h-1 bg-[#D4AF37] mx-auto rounded-full" />
                 </div>

@@ -37,8 +37,8 @@ export function Navbar() {
                 {/* Logo */}
                 <Link href="/" className="flex items-center gap-2">
                     <img
-                        src="https://tour-asset.goldenrama.com/50f07de9-edde-4592-9c7a-7fceaca73aa6-logo-golden-rama-color.svg"
-                        alt="Golden Rama Tours & Travel"
+                        src="/uprev-logo.png"
+                        alt="UpRev Tours"
                         className="h-10 md:h-12 w-auto object-contain transition-all duration-300"
                     />
                 </Link>
