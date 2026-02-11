@@ -28,33 +28,15 @@ const safeParse = (str: string) => {
 
 export function ChatWindow({ isOpen, onClose }: ChatWindowProps) {
     const [input, setInput] = useState("");
-    const [historyLoaded, setHistoryLoaded] = useState(false);
 
-    const { messages, sendMessage, status, setMessages } = useChat({
+    const { messages, sendMessage, status } = useChat({
         // Default API endpoint is /api/chat
+        // useChat automatically manages conversation history
     });
 
     const isLoading = status === "streaming" || status === "submitted";
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
-
-    // Load conversation history on mount
-    useEffect(() => {
-        if (!historyLoaded) {
-            fetch("/api/chat/history")
-                .then((res) => res.json())
-                .then((history) => {
-                    if (history && history.length > 0) {
-                        setMessages(history);
-                    }
-                    setHistoryLoaded(true);
-                })
-                .catch((err) => {
-                    console.error("Failed to load history:", err);
-                    setHistoryLoaded(true);
-                });
-        }
-    }, [historyLoaded, setMessages]);
 
     // Auto-scroll logic
     useEffect(() => {
