@@ -8,6 +8,7 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "tour-asset.goldenrama.com" },
     ],
   },
+  output: "standalone",
 };
 
 export default nextConfig;

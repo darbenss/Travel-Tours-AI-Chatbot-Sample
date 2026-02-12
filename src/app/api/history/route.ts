@@ -9,7 +9,10 @@ export async function GET(req: Request) {
     }
 
     try {
-        const response = await fetch(`http://127.0.0.1:8000/api/history/${threadId}`, {
+        // Fetch from Python Backend
+        // Use BACKEND_URL env var or default to localhost
+        const backendUrl = process.env.BACKEND_URL || "http://127.0.0.1:8000";
+        const response = await fetch(`${backendUrl}/api/history?threadId=${threadId}`, {
             cache: 'no-store'
         });
 

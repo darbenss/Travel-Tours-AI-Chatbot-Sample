@@ -6,8 +6,9 @@ import { NextResponse } from "next/server";
 export async function GET() {
     try {
         // Fetch from Python Backend
-        // Use 127.0.0.1 for localhost
-        const response = await fetch("http://127.0.0.1:8000/api/bookings", {
+        // Use BACKEND_URL env var or default to localhost
+        const backendUrl = process.env.BACKEND_URL || "http://127.0.0.1:8000";
+        const response = await fetch(`${backendUrl}/api/bookings`, {
             cache: 'no-store' // Ensure no caching
         });
 

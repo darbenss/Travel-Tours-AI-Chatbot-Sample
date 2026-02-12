@@ -4,9 +4,9 @@ import { Hero } from "@/components/landing/hero";
 import { TrustPartners } from "@/components/landing/trust-partners";
 import { CuratedCollections } from "@/components/landing/curated-collections";
 import { SeasonalSpotlight } from "@/components/landing/seasonal-spotlight";
-import { GoldenDifference } from "@/components/landing/golden-difference";
+import { UprevDifference } from "@/components/landing/uprev-difference";
 import { TravelerStories } from "@/components/landing/traveler-stories";
-import { GoldenJournal } from "@/components/landing/golden-journal";
+import { UprevJournal } from "@/components/landing/uprev-journal";
 import { Footer } from "@/components/landing/footer";
 import { FloatingActionButton } from "@/components/landing/floating-action-button";
 
@@ -18,9 +18,9 @@ export default function Home() {
       <TrustPartners />
       <CuratedCollections />
       <SeasonalSpotlight />
-      <GoldenDifference />
+      <UprevDifference />
       <TravelerStories />
-      <GoldenJournal />
+      <UprevJournal />
       <Footer />
       <FloatingActionButton />
     </main>

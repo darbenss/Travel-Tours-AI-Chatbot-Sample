@@ -33,7 +33,7 @@ const articles = [
     },
 ];
 
-export function GoldenJournal() {
+export function UprevJournal() {
     const mainArticle = articles[0];
     const sideArticles = articles.slice(1);
 

@@ -1,67 +1,94 @@
-# UpRev Tours - Landing Page & Chatbot
+# UpRev Travel Platform & AI Agent
 
-A modern, high-performance landing page for UpRev Tours, featuring an AI-powered travel assistant chatbot.
+A modern travel agency website featuring an intelligent AI sales assistant. This project combines a beautiful, responsive travel catalog with a powerful AI agent capable of searching packages, answering questions, and facilitating bookings via WhatsApp.
 
-## Tech Stack
-- **Framework:** Next.js 15 (App Router)
-- **Styling:** Tailwind CSS + Shadcn UI
-- **Choice of AI:** Vercel AI SDK + OpenRouter (Gemini 2.0 Flash)
-- **Database:** PostgreSQL (via Docker)
-- **ORM:** Drizzle ORM
+## 🚀 Features
 
-## Prerequisites
-- Node.js 18+
-- Docker Desktop (must be running)
-- OpenRouter API Key
+-   **Travel Website**: Stunning landing page with featured tours, testimonials, and seasonal highlights.
+-   **AI Sales Agent**: Context-aware chatbot that understands travel preferences and guides users.
+-   **Hybrid Search**: Semantic search (vector embeddings) mixed with keyword matching for accurate package discovery.
+-   **Automated Booking**: Collects customer details and generates official WhatsApp booking links.
+-   **Modern UI**: Responsive, beautiful chat interface built with Next.js and Tailwind CSS.
+-   **Containerized**: Fully Dockerized setup for easy deployment (Frontend + Backend + Database).
 
-## Setup Instructions
+## 🛠️ Tech Stack
 
-1.  **Environment Setup**
-    - Rename `.env.example` to `.env` (or create it) with the following:
-      ```env
-      DATABASE_URL=postgresql://postgres:postgres@localhost:5433/goldenrama_db
-      OPENROUTER_API_KEY=your_api_key_here
-      ```
-    - Also ensure `.env.local` exists for Next.js with the same values.
+-   **Frontend**: Next.js 14, Tailwind CSS, Framer Motion, Lucide React.
+-   **Backend**: Python 3.12, FastAPI, LangGraph, LangChain, SQLAlchemy.
+-   **Database**: PostgreSQL with `pgvector` extension.
+-   **AI/LLM**: OpenRouter (supporting Gemini, OpenAI, etc.).
 
-2.  **Start Database**
-    ```bash
-    docker compose up -d
-    ```
+## 📂 Project Structure
 
-3.  **Install Dependencies**
-    ```bash
-    npm install
-    ```
+```
+Travel-Tours-AI-Chatbot-Sample/
+├── server/                 # Python Backend
+│   ├── api/                # API Endpoints (Chat, Bookings)
+│   ├── db/                 # Database constraints & Seeding
+│   ├── services/           # Business Logic (Agent, Search, Booking)
+│   ├── main.py             # App Entrypoint
+│   └── Dockerfile          # Backend Docker config
+├── src/                    # Next.js Frontend
+│   ├── app/                # Pages & API Routes
+│   ├── components/         # React Components
+│   └── lib/                # Utilities
+├── Dockerfile              # Frontend Docker config
+├── docker-compose.yml      # Orchestration for all services
+└── README.md               # You are here
+```
 
-4.  **Database Setup (Schema & Seed)**
-    Run the following commands to generate schema and seed the database with tour packages:
-    ```bash
-    npm run db:generate
-    npm run db:migrate
-    npm run db:seed
-    ```
+## 🏎️ Quick Start
 
-5.  **Run Development Server**
-    ```bash
-    npm run dev
-    ```
-    Open [http://localhost:3000](http://localhost:3000).
+### 1. Prerequisites
 
-## Features
-- **Modern UI:** Responsive design with "wow" factor aesthetics.
-- **AI Chatbot:** Floating action button opens a chat assistant that can:
-  - Search for tours (Winter, Beach, Popular, etc.)
-  - Recommend packages with real-time DB data.
-  - Capture leads (Name + WhatsApp) and generating WhatsApp deep links.
-- **Dynamic Content:** Partner logos, tour cards, and testimonials.
+-   Docker & Docker Compose installed.
+-   An [OpenRouter API Key](https://openrouter.ai/).
 
-## Project Structure
-- `/src/components/landing`: Landing page sections (Hero, Spotlight, Footer...).
-- `/src/components/chat`: Chat window and AI interaction logic.
-- `/src/app/api/chat`: AI backend route (Edge Runtime).
-- `/src/db`: Drizzle ORM schema, config, and seed script.
+### 2. Configuration
 
-## Troubleshooting
-- **Database Connection Error:** Ensure Docker is running and port 5433 is available.
-- **AI Not Responding:** Check your `OPENROUTER_API_KEY` and internet connection.
+Create a `.env` file in the root directory:
+
+```bash
+# .env
+OPENROUTER_API_KEY=sk-or-v1-your-key-here
+COMPANY_WHATSAPP=6281234567890
+LOG_LEVEL=INFO
+
+# Optional: LangSmith Tracing
+LANGSMITH_TRACING=true
+LANGSMITH_API_KEY=your-langsmith-key
+LANGSMITH_PROJECT=uprev-agent
+```
+
+### 3. Run with Docker 🐳
+
+The entire application can be started with a single command:
+
+```bash
+docker-compose up --build
+```
+
+This will start:
+-   **Frontend**: http://localhost:3001
+-   **Backend API**: http://localhost:8000
+-   **PostgreSQL**: Port 5433 (mapped to 5432 internal)
+
+### 4. Seed Data 🌱
+
+The system automatically seeds the database with sample tour packages (Japan, Bali, Swiss, etc.) on startup. Check the backend logs to confirm:
+`🌱 Seeding database...`
+
+## 🧪 API Documentation
+
+Once the backend is running, visit the auto-generated docs:
+-   **Swagger UI**: http://localhost:8000/docs
+-   **ReDoc**: http://localhost:8000/redoc
+
+## 🔧 Development Notes
+
+-   **Database**: The Postgres volume is persisted in `postgres_data`. To reset the DB, run `docker-compose down -v`.
+-   **API Key Issues**: If you see "Failed to authenticate request with Clerk", ensure your OpenRouter key is valid and has credits.
+-   **Frontend-Backend Connection**: The frontend server-side API routes communicate with the backend via `http://backend:8000` (internal Docker network).
+
+## 📝 License
+Proprietary / Internal Use Only.

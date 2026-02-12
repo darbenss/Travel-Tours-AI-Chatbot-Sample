@@ -22,7 +22,7 @@ const features = [
     },
 ];
 
-export function GoldenDifference() {
+export function UprevDifference() {
     return (
         <section className="py-24 bg-[#F8F9FA]">
             <div className="container mx-auto px-6">

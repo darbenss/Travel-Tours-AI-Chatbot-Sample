@@ -35,8 +35,9 @@ export async function POST(req: Request) {
         console.log("Sending payload to Python backend:", JSON.stringify(payload));
 
         // Call Python Backend
-        // Use 127.0.0.1 for localhost to avoid IPv6 issues commonly on Windows
-        const pythonResponse = await fetch("http://127.0.0.1:8000/api/chat", {
+        // Use BACKEND_URL env var or default to localhost
+        const backendUrl = process.env.BACKEND_URL || "http://127.0.0.1:8000";
+        const pythonResponse = await fetch(`${backendUrl}/api/chat`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
