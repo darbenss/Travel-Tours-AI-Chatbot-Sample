@@ -14,7 +14,11 @@ const navLinks = [
     { name: "About", href: "#" },
 ];
 
-export function Navbar() {
+interface NavbarProps {
+    variant?: "transparent" | "solid";
+}
+
+export function Navbar({ variant = "transparent" }: NavbarProps) {
     const [isScrolled, setIsScrolled] = useState(false);
 
     useEffect(() => {
@@ -25,11 +29,13 @@ export function Navbar() {
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
+    const isSolid = variant === "solid" || isScrolled;
+
     return (
         <header
             className={cn(
                 "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
-                isScrolled
+                isSolid
                     ? "bg-[#002147]/95 backdrop-blur-md shadow-sm py-4"
                     : "bg-transparent py-6"
             )}

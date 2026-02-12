@@ -1,6 +1,7 @@
 import "dotenv/config";
 import pg from "pg";
 import { drizzle } from "drizzle-orm/node-postgres";
+import { sql } from "drizzle-orm";
 import { tours } from "./schema";
 
 const seedData = [
@@ -122,15 +123,32 @@ async function main() {
     });
     const db = drizzle(pool);
 
-    // Clear existing data
-    await db.delete(tours);
+    try {
+        // Clear existing data in correct order (dependent tables first)
+        console.log("🗑️  Clearing existing bookings...");
+        await db.execute(sql`DELETE FROM bookings`);
 
-    // Insert seed data
-    await db.insert(tours).values(seedData);
+        console.log("🗑️  Clearing existing conversations...");
+        await db.execute(sql`DELETE FROM conversations`);
 
-    console.log(`✅ Inserted ${seedData.length} tour packages.`);
+        console.log("🗑️  Clearing existing messages...");
+        await db.execute(sql`DELETE FROM messages`);
 
-    await pool.end();
+        console.log("🗑️  Clearing existing tours...");
+        await db.delete(tours);
+
+        // Insert seed data
+        console.log("📦 Inserting tour packages...");
+        await db.insert(tours).values(seedData);
+
+        console.log(`✅ Successfully seeded ${seedData.length} tour packages.`);
+    } catch (error) {
+        console.error("❌ Seed failed:", error);
+        throw error;
+    } finally {
+        await pool.end();
+    }
+
     process.exit(0);
 }
 

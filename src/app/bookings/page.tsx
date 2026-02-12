@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Calendar, Phone, MapPin, Search, Filter } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Navbar } from "@/components/landing/navbar";
 
 interface Booking {
     id: number;
@@ -13,6 +14,7 @@ interface Booking {
     tourId: number | null;
     status: "pending" | "confirmed" | "cancelled";
     createdAt: string;
+    numTravelers: number | null;
     tourTitle: string | null;
     tourDestination: string | null;
     tourPrice: number | null;
@@ -71,7 +73,8 @@ export default function BookingsPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 py-12 px-4">
+        <div className="min-h-screen bg-gray-50 pb-12 pt-28 px-4">
+            <Navbar variant="solid" />
             <div className="container mx-auto max-w-7xl">
                 {/* Header */}
                 <motion.div
@@ -182,6 +185,11 @@ export default function BookingsPage() {
                                             <Phone className="h-3 w-3" />
                                             {booking.contactInfo}
                                         </div>
+                                        {booking.numTravelers && (
+                                            <div className="text-xs text-blue-600 font-medium mt-1 bg-blue-50 inline-block px-2 py-0.5 rounded-full">
+                                                👥 {booking.numTravelers} Pax
+                                            </div>
+                                        )}
                                     </div>
 
                                     {/* Tour Info */}

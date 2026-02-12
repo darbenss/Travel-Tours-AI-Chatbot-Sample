@@ -1,31 +1,38 @@
 import { NextResponse } from "next/server";
-import { db } from "@/db";
-import { bookings, tours } from "@/db/schema";
-import { eq, desc } from "drizzle-orm";
 
 /**
- * GET endpoint to fetch all bookings with tour details
+ * GET endpoint to fetch all bookings from Python Backend
  */
 export async function GET() {
     try {
-        // Fetch bookings with tour information using LEFT JOIN
-        const allBookings = await db
-            .select({
-                id: bookings.id,
-                customerName: bookings.customerName,
-                contactInfo: bookings.contactInfo,
-                tourId: bookings.tourId,
-                status: bookings.status,
-                createdAt: bookings.createdAt,
-                tourTitle: tours.title,
-                tourDestination: tours.destination,
-                tourPrice: tours.price,
-            })
-            .from(bookings)
-            .leftJoin(tours, eq(bookings.tourId, tours.id))
-            .orderBy(desc(bookings.createdAt));
+        // Fetch from Python Backend
+        // Use 127.0.0.1 for localhost
+        const response = await fetch("http://127.0.0.1:8000/api/bookings", {
+            cache: 'no-store' // Ensure no caching
+        });
 
-        return NextResponse.json(allBookings);
+        if (!response.ok) {
+            console.error("Python Backend Error:", response.status, response.statusText);
+            return NextResponse.json({ error: "Failed to fetch bookings from backend" }, { status: response.status });
+        }
+
+        const pythonBookings = await response.json();
+
+        // Map Python response to Frontend expected format
+        const formattedBookings = pythonBookings.map((booking: any) => ({
+            id: booking.booking_id,
+            customerName: booking.customer_name,
+            contactInfo: booking.whatsapp_number,
+            tourId: booking.package_id,
+            status: booking.status,
+            createdAt: booking.created_at,
+            numTravelers: booking.num_travelers,
+            tourTitle: booking.package_title,
+            tourDestination: booking.package_destination,
+            tourPrice: booking.package_price,
+        }));
+
+        return NextResponse.json(formattedBookings);
     } catch (error) {
         console.error("[GET /api/bookings] Error:", error);
         return NextResponse.json({ error: "Failed to fetch bookings" }, { status: 500 });

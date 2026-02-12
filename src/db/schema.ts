@@ -50,6 +50,7 @@ export const bookings = pgTable("bookings", {
 export const conversations = pgTable("conversations", {
     id: serial("id").primaryKey(),
     sessionId: text("session_id").notNull().unique(), // From cookie
+    conversationState: text("conversation_state"), // JSON string for state tracking
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
