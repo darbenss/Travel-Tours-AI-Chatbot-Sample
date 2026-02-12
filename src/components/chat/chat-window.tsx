@@ -37,10 +37,42 @@ export function ChatWindow({ isOpen, onClose }: ChatWindowProps) {
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState("");
     const [isLoading, setIsLoading] = useState(false);
-    const [sessionId] = useState(() => Math.random().toString(36).substring(7)); // Simple session ID
+    const [threadId, setThreadId] = useState("");
 
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
+
+    // Initialize thread ID and fetch history
+    useEffect(() => {
+        // 1. Get or create threadId from cookie
+        let currentThreadId = getCookie("chat_thread_id");
+        if (!currentThreadId) {
+            currentThreadId = Math.random().toString(36).substring(7); // Simple ID
+            setCookie("chat_thread_id", currentThreadId, 30); // 30 days
+        }
+        setThreadId(currentThreadId);
+
+        // 2. Fetch history
+        fetchHistory(currentThreadId);
+    }, []);
+
+    const fetchHistory = async (id: string) => {
+        try {
+            const res = await fetch(`/api/history?threadId=${id}`);
+            if (res.ok) {
+                const history = await res.json();
+                // Map backend history to frontend messages
+                const mappedMessages = history.map((msg: any, index: number) => ({
+                    id: `hist-${index}`,
+                    role: msg.role,
+                    content: msg.content
+                }));
+                setMessages(mappedMessages);
+            }
+        } catch (err) {
+            console.error("Failed to load history:", err);
+        }
+    };
 
     // Auto-scroll logic
     useEffect(() => {
@@ -75,7 +107,7 @@ export function ChatWindow({ isOpen, onClose }: ChatWindowProps) {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     messages: [...messages, userMsg],
-                    sessionId: sessionId // Send session ID for continuity
+                    sessionId: threadId // Send persistent thread ID
                 })
             });
 
@@ -127,7 +159,7 @@ export function ChatWindow({ isOpen, onClose }: ChatWindowProps) {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     messages: [...messages, userMsg],
-                    sessionId: sessionId
+                    sessionId: threadId
                 })
             });
 
@@ -147,6 +179,29 @@ export function ChatWindow({ isOpen, onClose }: ChatWindowProps) {
             setIsLoading(false);
         }
     };
+
+
+    // Cookie helpers
+    function setCookie(name: string, value: string, days: number) {
+        let expires = "";
+        if (days) {
+            const date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            expires = "; expires=" + date.toUTCString();
+        }
+        document.cookie = name + "=" + (value || "") + expires + "; path=/";
+    }
+
+    function getCookie(name: string) {
+        const nameEQ = name + "=";
+        const ca = document.cookie.split(';');
+        for (let i = 0; i < ca.length; i++) {
+            let c = ca[i];
+            while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+            if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+        }
+        return null;
+    }
 
 
     // Custom Message Renderer (Simplified for manual fetch)
@@ -176,6 +231,7 @@ export function ChatWindow({ isOpen, onClose }: ChatWindowProps) {
                             h1: ({ node, ...props }) => <h1 className="text-lg font-bold text-[#002147] mt-3 mb-2" {...props} />,
                             h2: ({ node, ...props }) => <h2 className="text-base font-bold text-[#002147] mt-3 mb-2" {...props} />,
                             h3: ({ node, ...props }) => <h3 className="text-sm font-bold text-[#002147] mt-2 mb-1" {...props} />,
+                            a: ({ node, ...props }) => <a className="text-blue-600 hover:underline font-medium" target="_blank" rel="noopener noreferrer" {...props} />,
                         }}
                     >
                         {text}
