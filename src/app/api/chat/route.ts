@@ -291,7 +291,7 @@ export async function POST(req: Request) {
         messages: await convertToModelMessages(incomingMessages),
         tools: chatTools,
         toolChoice: shouldFavorTools ? "auto" : "auto", // Can change to "required" if needed
-        maxSteps: shouldFavorTools ? 3 : 2, // More steps when tools are likely needed
+        maxSteps: shouldFavorTools ? 6 : 5, // More steps when tools are likely needed
         maxOutputTokens: 4000,
         async onFinish({ text, toolCalls }) {
             try {
