@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   title: "UpRev Tours - Seamless Luxury & Trusted Exploration",
   description: "Experience the world with Indonesia's most trusted travel partner since 1971.",
   icons: {
-    icon: "/UpRev Logo Mini.png",
+    icon: "UpRev.png",
   },
 };
 
