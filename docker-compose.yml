@@ -1,24 +1,6 @@
 version: '3.8'
 
 services:
-  # Nginx Proxy Manager (GUI + Auto SSL)
-  nginx:
-    image: 'jc21/nginx-proxy-manager:latest'
-    container_name: nginx
-    restart: unless-stopped
-    ports:
-      - "${APP_PORT:-3001}:80" # Public HTTP Port (Change in .env)
-      - "${DASHBOARD_PORT:-3002}:81" # Dashboard Port (Change in .env)
-      - "3443:443" # Public HTTPS Port (Optional)
-    volumes:
-      - ./nginx/data:/data
-      - ./nginx/letsencrypt:/etc/letsencrypt
-    depends_on:
-      - frontend
-      - backend
-    networks:
-      - app-network
-
   # Python Backend
   backend:
     build:
@@ -26,7 +8,8 @@ services:
       dockerfile: Dockerfile
     container_name: backend
     restart: unless-stopped
-    # Ports removed (access via Nginx)
+    ports:
+      - "8000:8000" # Exposed for existing Nginx Proxy Manager
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/uprev_db
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
@@ -49,7 +32,8 @@ services:
       dockerfile: Dockerfile
     container_name: frontend
     restart: unless-stopped
-    # Ports removed (access via Nginx)
+    ports:
+      - "3001:3000" # Exposed for existing Nginx Proxy Manager
     environment:
       - BACKEND_URL=http://backend:8000
     depends_on:
