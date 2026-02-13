@@ -106,8 +106,8 @@ export function ChatWindow({ isOpen, onClose }: ChatWindowProps) {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    messages: [...messages, userMsg],
-                    sessionId: threadId // Send persistent thread ID
+                    message: userMsg.content,
+                    thread_id: threadId
                 })
             });
 
@@ -158,8 +158,8 @@ export function ChatWindow({ isOpen, onClose }: ChatWindowProps) {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    messages: [...messages, userMsg],
-                    sessionId: threadId
+                    message: userMsg.content,
+                    thread_id: threadId
                 })
             });
 
