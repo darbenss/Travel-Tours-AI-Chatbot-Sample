@@ -46,3 +46,11 @@ class BookingSchema(BaseModel):
     
     class Config:
         from_attributes = True
+
+
+class BookingCreate(BaseModel):
+    """Schema for creating a new booking manually"""
+    package_id: str
+    customer_name: str
+    whatsapp_number: str
+    num_travelers: int = 1

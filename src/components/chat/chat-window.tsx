@@ -58,7 +58,7 @@ export function ChatWindow({ isOpen, onClose }: ChatWindowProps) {
 
     const fetchHistory = async (id: string) => {
         try {
-            const res = await fetch(`/api/history?threadId=${id}`);
+            const res = await fetch(`/api/history/threadId=${id}`);
             if (res.ok) {
                 const history = await res.json();
                 // Map backend history to frontend messages

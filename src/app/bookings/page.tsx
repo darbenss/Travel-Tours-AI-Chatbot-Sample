@@ -6,6 +6,7 @@ import { Calendar, Phone, MapPin, Search, Filter } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Navbar } from "@/components/landing/navbar";
+import { CreateBookingModal } from "@/components/bookings/create-booking-modal";
 
 interface Booking {
     id: number;
@@ -27,8 +28,14 @@ export default function BookingsPage() {
     const [searchQuery, setSearchQuery] = useState("");
     const [statusFilter, setStatusFilter] = useState<string>("all");
 
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
     useEffect(() => {
-        // Fetch bookings from API
+        fetchBookings();
+    }, []);
+
+    const fetchBookings = () => {
+        setLoading(true);
         fetch("/api/bookings")
             .then((res) => res.json())
             .then((data) => {
@@ -36,7 +43,6 @@ export default function BookingsPage() {
                 const rawData = data.formatted || data.debug_python_response || data;
 
                 // Map snake_case (Backend) to camelCase (Frontend)
-                // This handles cases where Nginx routes directly to Backend
                 const mappedBookings = Array.isArray(rawData) ? rawData.map((b: any) => ({
                     id: b.booking_id || b.id,
                     customerName: b.customer_name || b.customerName || "Unknown",
@@ -58,7 +64,7 @@ export default function BookingsPage() {
                 console.error("Failed to load bookings:", err);
                 setLoading(false);
             });
-    }, []);
+    };
 
     // Filter bookings
     const filteredBookings = bookings.filter((booking) => {
@@ -101,14 +107,22 @@ export default function BookingsPage() {
                 <motion.div
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="mb-8"
+                    className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
                 >
-                    <h1 className="text-4xl font-bold text-gray-900 mb-2">
-                        📋 Bookings Management
-                    </h1>
-                    <p className="text-gray-600">
-                        Manage and view all customer bookings
-                    </p>
+                    <div>
+                        <h1 className="text-4xl font-bold text-gray-900 mb-2">
+                            📋 Bookings Management
+                        </h1>
+                        <p className="text-gray-600">
+                            Manage and view all customer bookings
+                        </p>
+                    </div>
+                    <Button
+                        onClick={() => setIsCreateModalOpen(true)}
+                        className="bg-[#D4AF37] hover:bg-[#b8962e] text-white"
+                    >
+                        + Create Booking
+                    </Button>
                 </motion.div>
 
                 {/* Filters */}
@@ -271,6 +285,12 @@ export default function BookingsPage() {
                     </div>
                 )}
             </div>
+
+            <CreateBookingModal
+                isOpen={isCreateModalOpen}
+                onClose={() => setIsCreateModalOpen(false)}
+                onSuccess={fetchBookings}
+            />
         </div>
     );
 }
