@@ -42,12 +42,9 @@ export function Navbar({ variant = "transparent" }: NavbarProps) {
         >
             <div className="container mx-auto px-6 flex items-center justify-between">
                 {/* Logo */}
-                <Link href="/" className="flex items-center gap-2">
-                    <img
-                        src="/uprev-logo.png"
-                        alt="UpRev Tours"
-                        className="h-10 md:h-12 w-auto object-contain transition-all duration-300"
-                    />
+                <Link href="/" className="flex items-center gap-2 text-2xl font-bold tracking-tight">
+                    <span className="text-white">UPREV</span>
+                    <span className="text-[#D4AF37]">DEMO</span>
                 </Link>
 
                 {/* Desktop Nav */}

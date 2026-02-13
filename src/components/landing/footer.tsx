@@ -13,12 +13,9 @@ export function Footer() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
                     {/* Brand */}
                     <div className="flex flex-col space-y-6">
-                        <Link href="/">
-                            <img
-                                src="/uprev-logo.png"
-                                alt="UpRev Tours"
-                                className="h-12 w-auto object-contain"
-                            />
+                        <Link href="/" className="flex items-center gap-2 text-3xl font-bold tracking-tight">
+                            <span className="text-white">UPREV</span>
+                            <span className="text-[#D4AF37]">DEMO</span>
                         </Link>
                         <p className="text-gray-300 leading-relaxed max-w-xs">
                             Your trusted partner in exploring the world with elegance and ease since 1971.

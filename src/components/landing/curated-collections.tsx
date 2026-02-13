@@ -26,7 +26,7 @@ const collections = [
     id: "attractions",
     title: "Attractions",
     description: "Tickets to world-class entertainment.",
-    image: "https://www.gokite.travel/wp-content/uploads/2025/02/Top-8-Tourist-Attractions-in-South-Korea-in-2025.webp", // Placeholder
+    image: "https://theparkprodigy.com/wp-content/uploads/2021/05/dreamstime_s_148733790-1.jpg", // Placeholder
     link: "/attractions",
     className: "md:col-span-1 md:row-span-1",
   },
