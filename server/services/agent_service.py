@@ -139,7 +139,7 @@ llm = ChatOpenAI(
     openai_api_key=settings.openrouter_api_key,
     openai_api_base="https://openrouter.ai/api/v1",
     default_headers={
-        "HTTP-Referer": "http://localhost:3001",
+        "HTTP-Referer": settings.app_url,
         "X-Title": "UpRev AI Sales Agent",
     }
 )

@@ -63,6 +63,7 @@ class Booking(Base):
     customer_name = Column(String(100), nullable=False)
     whatsapp_number = Column(String(20), nullable=False)
     num_travelers = Column(Integer, nullable=True)
+    total_price = Column(DECIMAL(12, 2), nullable=True)
     preferred_departure_date = Column(DateTime, nullable=True)
     
     status = Column(

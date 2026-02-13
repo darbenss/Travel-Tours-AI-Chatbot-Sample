@@ -12,17 +12,21 @@ export async function GET() {
             cache: 'no-store' // Ensure no caching
         });
 
+        console.log("response");
+
         if (!response.ok) {
             console.error("Python Backend Error:", response.status, response.statusText);
             return NextResponse.json({ error: "Failed to fetch bookings from backend" }, { status: response.status });
         }
 
+        console.log("response");
         const pythonBookings = await response.json();
+        console.log("RAW PYTHON BOOKINGS:", JSON.stringify(pythonBookings, null, 2));
 
         // Map Python response to Frontend expected format
         const formattedBookings = pythonBookings.map((booking: any) => ({
             id: booking.booking_id,
-            customerName: booking.customer_name,
+            customerName: booking.customer_name || "Unknown",
             contactInfo: booking.whatsapp_number,
             tourId: booking.package_id,
             status: booking.status,
@@ -31,9 +35,14 @@ export async function GET() {
             tourTitle: booking.package_title,
             tourDestination: booking.package_destination,
             tourPrice: booking.package_price,
+            totalPrice: booking.total_price,
         }));
 
-        return NextResponse.json(formattedBookings);
+        // Return raw data for debugging
+        return NextResponse.json({
+            debug_python_response: pythonBookings,
+            formatted: formattedBookings
+        });
     } catch (error) {
         console.error("[GET /api/bookings] Error:", error);
         return NextResponse.json({ error: "Failed to fetch bookings" }, { status: 500 });

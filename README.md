@@ -69,7 +69,8 @@ docker-compose up --build
 ```
 
 This will start:
--   **Main App (Nginx)**: http://localhost:3001
+-   **Main App (Nginx)**: http://localhost:3001 (or https://uprev.id in production)
+-   **Frontend (Direct)**: http://localhost:3000
 -   **Frontend**: Internal (proxied via Nginx)
 -   **Backend API**: Internal (proxied via Nginx at `/api`)
 -   **PostgreSQL**: Port 5433 (mapped to 5432 internal)

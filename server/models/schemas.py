@@ -39,6 +39,7 @@ class BookingSchema(BaseModel):
     customer_name: str
     whatsapp_number: str
     num_travelers: Optional[int]
+    total_price: Optional[float]
     status: str
     whatsapp_link: str
     created_at: datetime

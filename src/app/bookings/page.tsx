@@ -18,6 +18,7 @@ interface Booking {
     tourTitle: string | null;
     tourDestination: string | null;
     tourPrice: number | null;
+    totalPrice: number | null;
 }
 
 export default function BookingsPage() {
@@ -31,7 +32,26 @@ export default function BookingsPage() {
         fetch("/api/bookings")
             .then((res) => res.json())
             .then((data) => {
-                setBookings(data);
+                // Check if data is wrapped (from debugging) or raw array
+                const rawData = data.formatted || data.debug_python_response || data;
+
+                // Map snake_case (Backend) to camelCase (Frontend)
+                // This handles cases where Nginx routes directly to Backend
+                const mappedBookings = Array.isArray(rawData) ? rawData.map((b: any) => ({
+                    id: b.booking_id || b.id,
+                    customerName: b.customer_name || b.customerName || "Unknown",
+                    contactInfo: b.whatsapp_number || b.contactInfo,
+                    tourId: b.package_id || b.tourId,
+                    status: b.status,
+                    createdAt: b.created_at || b.createdAt,
+                    numTravelers: b.num_travelers || b.numTravelers,
+                    totalPrice: b.total_price || b.totalPrice,
+                    tourTitle: b.package_title || b.tourTitle,
+                    tourDestination: b.package_destination || b.tourDestination,
+                    tourPrice: b.package_price || b.tourPrice,
+                })) : [];
+
+                setBookings(mappedBookings);
                 setLoading(false);
             })
             .catch((err) => {
@@ -42,7 +62,8 @@ export default function BookingsPage() {
 
     // Filter bookings
     const filteredBookings = bookings.filter((booking) => {
-        const matchesSearch = booking.customerName
+        const name = booking.customerName || "";
+        const matchesSearch = name
             .toLowerCase()
             .includes(searchQuery.toLowerCase());
         const matchesStatus =
@@ -206,7 +227,9 @@ export default function BookingsPage() {
                                                 </div>
                                                 <div className="text-sm text-[#D4AF37] font-bold mt-1">
                                                     IDR{" "}
-                                                    {(booking.tourPrice! / 1000000).toFixed(1)}M
+                                                    {booking.totalPrice
+                                                        ? (booking.totalPrice / 1000000).toFixed(1) + "M"
+                                                        : (booking.tourPrice! / 1000000).toFixed(1) + "M (pax)"}
                                                 </div>
                                             </>
                                         ) : (
