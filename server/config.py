@@ -30,7 +30,7 @@ class Settings(BaseSettings):
     # Logging
     log_level: str = os.getenv("LOG_LEVEL", "INFO")
 
-    app_url: str = os.getenv("APP_URL", "https://api.uprev.id")
+    app_url: str = os.getenv("APP_URL", "https://demo1.uprev.id")
     
     model_config = SettingsConfigDict(
         env_file=".env",
