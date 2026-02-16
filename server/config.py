@@ -2,9 +2,15 @@ import os
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from functools import lru_cache
 from typing import Optional
+from pathlib import Path
 import dotenv
 
-dotenv.load_dotenv()
+# Determine the absolute path to .env file (one level up from server directory)
+# server/config.py -> server/ -> project_root/.env
+ENV_PATH = Path(__file__).resolve().parent.parent / ".env"
+
+# Load environment variables into os.environ for non-Pydantic usage if needed
+dotenv.load_dotenv(ENV_PATH)
 
 
 class Settings(BaseSettings):
@@ -32,6 +38,12 @@ class Settings(BaseSettings):
 
     app_url: str = os.getenv("APP_URL", "https://demo1.uprev.id")
     
+    
+    # Auth
+    secret_key: str = os.getenv("SECRET_KEY", "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7")
+    algorithm: str = "HS256"
+    access_token_expire_minutes: int = 30
+
     model_config = SettingsConfigDict(
         env_file=".env",
         case_sensitive=False,

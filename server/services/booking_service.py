@@ -20,7 +20,8 @@ class BookingService:
         package_id: str,
         customer_name: str,
         whatsapp_number: str,
-        num_travelers: Optional[int] = None
+        num_travelers: Optional[int] = None,
+        user_id: Optional[str] = None
     ) -> Dict:
         """Create a new booking and generate WhatsApp link"""
         
@@ -58,6 +59,7 @@ class BookingService:
         booking = Booking(
             booking_id=booking_id,
             package_id=package_id,
+            user_id=user_id,
             customer_name=customer_name,
             whatsapp_number=whatsapp_number,
             num_travelers=num_travelers,
@@ -126,6 +128,30 @@ Mohon bantuannya untuk melanjutkan proses booking. Terima kasih!"""
         results = self.db.query(Booking, Package).join(
             Package, Booking.package_id == Package.id
         ).order_by(Booking.created_at.desc()).all()
+        
+        bookings_list = []
+        for booking, package in results:
+            bookings_list.append({
+                "booking_id": booking.booking_id,
+                "customer_name": booking.customer_name,
+                "whatsapp_number": booking.whatsapp_number,
+                "package_id": booking.package_id,
+                "status": booking.status,
+                "created_at": booking.created_at,
+                "num_travelers": booking.num_travelers,
+                "total_price": float(booking.total_price) if booking.total_price else None,
+                "package_title": package.title,
+                "package_destination": package.destination,
+                "package_price": float(package.price)
+            })
+            
+        return bookings_list
+
+    def get_user_bookings(self, user_id: str):
+        """Get bookings for a specific user"""
+        results = self.db.query(Booking, Package).join(
+            Package, Booking.package_id == Package.id
+        ).filter(Booking.user_id == user_id).order_by(Booking.created_at.desc()).all()
         
         bookings_list = []
         for booking, package in results:

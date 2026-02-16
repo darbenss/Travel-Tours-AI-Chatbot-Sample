@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/context/AuthContext";
 
 const navLinks = [
     { name: "Destinations", href: "#" },
@@ -62,17 +63,71 @@ export function Navbar({ variant = "transparent" }: NavbarProps) {
 
                 {/* Login / Actions */}
                 <div className="hidden md:flex items-center gap-4">
-                    <Button
-                        variant={isScrolled ? "outline" : "ghost"}
-                        className="font-medium text-white hover:bg-white/10 hover:text-white"
-                    >
-                        Log In
-                    </Button>
-                    <Button variant="default" className="bg-[#D4AF37] hover:bg-[#b8962e] text-white">
-                        Plan My Trip
-                    </Button>
+                    <AuthButtons isScrolled={isScrolled} />
                 </div>
             </div>
         </header>
     );
+}
+
+function AuthButtons({ isScrolled }: { isScrolled: boolean }) {
+    const { user, logout, loading } = useAuth();
+
+    if (loading) return null;
+
+    if (user) {
+        return (
+            <div className="flex items-center gap-4">
+                <Link
+                    href="/dashboard"
+                    className={cn(
+                        "text-sm font-medium transition-colors hover:text-[#D4AF37]",
+                        isScrolled ? "text-slate-800" : "text-white"
+                    )}
+                >
+                    My Bookings
+                </Link>
+                {user.is_admin && (
+                    <Link
+                        href="/admin"
+                        className={cn(
+                            "text-sm font-medium transition-colors hover:text-[#D4AF37]",
+                            isScrolled ? "text-slate-800" : "text-white"
+                        )}
+                    >
+                        Admin
+                    </Link>
+                )}
+                <Button
+                    variant="ghost"
+                    onClick={logout}
+                    className={cn(
+                        "font-medium hover:bg-white/10",
+                        isScrolled ? "text-slate-800 hover:text-slate-900" : "text-white hover:text-white"
+                    )}
+                >
+                    Log Out
+                </Button>
+            </div>
+        )
+    }
+
+    return (
+        <>
+            <Link href="/login">
+                <Button
+                    variant={isScrolled ? "outline" : "ghost"}
+                    className={cn(
+                        "font-medium hover:bg-white/10",
+                        isScrolled ? "text-slate-800 hover:text-slate-900 border-slate-200" : "text-white hover:text-white"
+                    )}
+                >
+                    Log In
+                </Button>
+            </Link>
+            <Button variant="default" className="bg-[#D4AF37] hover:bg-[#b8962e] text-white">
+                Plan My Trip
+            </Button>
+        </>
+    )
 }

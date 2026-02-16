@@ -3,6 +3,7 @@
 import { useRef, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Send, X, Bot, MapPin } from "lucide-react";
+import { apiRequest } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import ReactMarkdown from 'react-markdown';
 
@@ -58,17 +59,14 @@ export function ChatWindow({ isOpen, onClose }: ChatWindowProps) {
 
     const fetchHistory = async (id: string) => {
         try {
-            const res = await fetch(`/api/history/threadId=${id}`);
-            if (res.ok) {
-                const history = await res.json();
-                // Map backend history to frontend messages
-                const mappedMessages = history.map((msg: any, index: number) => ({
-                    id: `hist-${index}`,
-                    role: msg.role,
-                    content: msg.content
-                }));
-                setMessages(mappedMessages);
-            }
+            const history = await apiRequest(`/chat/history/${id}`);
+            // Map backend history to frontend messages
+            const mappedMessages = history.map((msg: any, index: number) => ({
+                id: `hist-${index}`,
+                role: msg.role,
+                content: msg.content
+            }));
+            setMessages(mappedMessages);
         } catch (err) {
             console.error("Failed to load history:", err);
         }
@@ -102,20 +100,13 @@ export function ChatWindow({ isOpen, onClose }: ChatWindowProps) {
         setIsLoading(true);
 
         try {
-            const response = await fetch("/api/chat", {
+            const data = await apiRequest("/chat", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
+                body: {
                     message: userMsg.content,
                     thread_id: threadId
-                })
+                }
             });
-
-            if (!response.ok) {
-                throw new Error("Failed to send message");
-            }
-
-            const data = await response.json();
 
             // data should be { id, role, content, ... }
             const assistantMsg: Message = {
@@ -154,17 +145,13 @@ export function ChatWindow({ isOpen, onClose }: ChatWindowProps) {
         setIsLoading(true);
 
         try {
-            const response = await fetch("/api/chat", {
+            const data = await apiRequest("/chat", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
+                body: {
                     message: userMsg.content,
                     thread_id: threadId
-                })
+                }
             });
-
-            if (!response.ok) throw new Error("Failed");
-            const data = await response.json();
 
             const assistantMsg: Message = {
                 id: data.id || Date.now().toString(),

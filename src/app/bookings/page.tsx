@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Navbar } from "@/components/landing/navbar";
 import { CreateBookingModal } from "@/components/bookings/create-booking-modal";
+import { apiRequest } from "@/lib/api";
 
 interface Booking {
     id: number;
@@ -36,9 +37,8 @@ export default function BookingsPage() {
 
     const fetchBookings = () => {
         setLoading(true);
-        fetch("/api/bookings")
-            .then((res) => res.json())
-            .then((data) => {
+        apiRequest("/bookings")
+            .then((data: any) => {
                 // Check if data is wrapped (from debugging) or raw array
                 const rawData = data.formatted || data.debug_python_response || data;
 
@@ -60,7 +60,7 @@ export default function BookingsPage() {
                 setBookings(mappedBookings);
                 setLoading(false);
             })
-            .catch((err) => {
+            .catch((err: any) => {
                 console.error("Failed to load bookings:", err);
                 setLoading(false);
             });

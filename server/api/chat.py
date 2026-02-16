@@ -60,7 +60,6 @@ async def chat_endpoint(
             status_code=500,
             detail="Maaf, terjadi kesalahan. Silakan coba lagi."
         )
-        db.close()
 
 @router.get("/history/{thread_id}")
 async def get_history_endpoint(thread_id: str):

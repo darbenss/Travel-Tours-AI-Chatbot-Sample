@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Loader2 } from "lucide-react";
+import { apiRequest } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -41,14 +42,11 @@ export function CreateBookingModal({ isOpen, onClose, onSuccess }: CreateBooking
     const fetchPackages = async () => {
         setLoadingPackages(true);
         try {
-            const res = await fetch("/api/packages");
-            if (res.ok) {
-                const data = await res.json();
-                setPackages(data);
-                // Set default package if available and none selected
-                if (data.length > 0 && !formData.package_id) {
-                    setFormData(prev => ({ ...prev, package_id: data[0].id }));
-                }
+            const data = await apiRequest("/packages");
+            setPackages(data);
+            // Set default package if available and none selected
+            if (data.length > 0 && !formData.package_id) {
+                setFormData(prev => ({ ...prev, package_id: data[0].id }));
             }
         } catch (error) {
             console.error("Failed to fetch packages:", error);
@@ -62,29 +60,23 @@ export function CreateBookingModal({ isOpen, onClose, onSuccess }: CreateBooking
         setSubmitting(true);
 
         try {
-            const res = await fetch("/api/bookings", {
+            await apiRequest("/bookings", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(formData),
+                body: formData,
             });
 
-            if (res.ok) {
-                onSuccess();
-                onClose();
-                // Reset form
-                setFormData({
-                    package_id: packages[0]?.id || "",
-                    customer_name: "",
-                    whatsapp_number: "",
-                    num_travelers: 1,
-                });
-            } else {
-                const error = await res.json();
-                alert(`Error: ${error.detail || "Failed to create booking"}`);
-            }
-        } catch (error) {
+            onSuccess();
+            onClose();
+            // Reset form
+            setFormData({
+                package_id: packages[0]?.id || "",
+                customer_name: "",
+                whatsapp_number: "",
+                num_travelers: 1,
+            });
+        } catch (error: any) {
             console.error("Error creating booking:", error);
-            alert("Failed to create booking. Please try again.");
+            alert(`Error: ${error.message || "Failed to create booking"}`);
         } finally {
             setSubmitting(false);
         }

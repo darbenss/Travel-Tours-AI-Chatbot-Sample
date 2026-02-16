@@ -10,9 +10,23 @@ import uuid
 Base = declarative_base()
 
 
+
 def generate_uuid():
     """Generate UUID as string"""
     return str(uuid.uuid4())
+
+
+class User(Base):
+    """User model"""
+    __tablename__ = "users"
+
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    email = Column(String(255), unique=True, index=True, nullable=False)
+    hashed_password = Column(String(255), nullable=False)
+    is_admin = Column(Boolean, default=False)
+    
+    created_at = Column(DateTime, default=datetime.utcnow, server_default=func.now())
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, server_default=func.now())
 
 
 class Package(Base):
@@ -59,6 +73,7 @@ class Booking(Base):
     
     booking_id = Column(String(36), primary_key=True, default=generate_uuid)
     package_id = Column(String(36), ForeignKey("packages.id"), nullable=False, index=True)
+    user_id = Column(String(36), ForeignKey("users.id"), nullable=True, index=True)
     
     customer_name = Column(String(100), nullable=False)
     whatsapp_number = Column(String(20), nullable=False)
