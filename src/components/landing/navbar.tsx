@@ -119,7 +119,7 @@ function AuthButtons({ isScrolled }: { isScrolled: boolean }) {
                     variant={isScrolled ? "outline" : "ghost"}
                     className={cn(
                         "font-medium hover:bg-white/10",
-                        isScrolled ? "text-slate-800 hover:text-slate-900 border-slate-200" : "text-white hover:text-white"
+                        isScrolled ? "text-white hover:text-white border-[#b8962e]" : "text-white hover:text-white"
                     )}
                 >
                     Log In
