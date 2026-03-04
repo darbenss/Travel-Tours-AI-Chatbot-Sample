@@ -6,6 +6,8 @@ import { Calendar, Phone, MapPin, Search, Filter } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Navbar } from "@/components/landing/navbar";
+import { CreateBookingModal } from "@/components/bookings/create-booking-modal";
+import { apiRequest } from "@/lib/api";
 
 interface Booking {
     id: number;
@@ -18,6 +20,7 @@ interface Booking {
     tourTitle: string | null;
     tourDestination: string | null;
     tourPrice: number | null;
+    totalPrice: number | null;
 }
 
 export default function BookingsPage() {
@@ -26,23 +29,47 @@ export default function BookingsPage() {
     const [searchQuery, setSearchQuery] = useState("");
     const [statusFilter, setStatusFilter] = useState<string>("all");
 
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
     useEffect(() => {
-        // Fetch bookings from API
-        fetch("/api/bookings")
-            .then((res) => res.json())
-            .then((data) => {
-                setBookings(data);
+        fetchBookings();
+    }, []);
+
+    const fetchBookings = () => {
+        setLoading(true);
+        apiRequest("/bookings")
+            .then((data: any) => {
+                // Check if data is wrapped (from debugging) or raw array
+                const rawData = data.formatted || data.debug_python_response || data;
+
+                // Map snake_case (Backend) to camelCase (Frontend)
+                const mappedBookings = Array.isArray(rawData) ? rawData.map((b: any) => ({
+                    id: b.booking_id || b.id,
+                    customerName: b.customer_name || b.customerName || "Unknown",
+                    contactInfo: b.whatsapp_number || b.contactInfo,
+                    tourId: b.package_id || b.tourId,
+                    status: b.status,
+                    createdAt: b.created_at || b.createdAt,
+                    numTravelers: b.num_travelers || b.numTravelers,
+                    totalPrice: b.total_price || b.totalPrice,
+                    tourTitle: b.package_title || b.tourTitle,
+                    tourDestination: b.package_destination || b.tourDestination,
+                    tourPrice: b.package_price || b.tourPrice,
+                })) : [];
+
+                setBookings(mappedBookings);
                 setLoading(false);
             })
-            .catch((err) => {
+            .catch((err: any) => {
                 console.error("Failed to load bookings:", err);
                 setLoading(false);
             });
-    }, []);
+    };
 
     // Filter bookings
     const filteredBookings = bookings.filter((booking) => {
-        const matchesSearch = booking.customerName
+        const name = booking.customerName || "";
+        const matchesSearch = name
             .toLowerCase()
             .includes(searchQuery.toLowerCase());
         const matchesStatus =
@@ -80,14 +107,22 @@ export default function BookingsPage() {
                 <motion.div
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="mb-8"
+                    className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
                 >
-                    <h1 className="text-4xl font-bold text-gray-900 mb-2">
-                        📋 Bookings Management
-                    </h1>
-                    <p className="text-gray-600">
-                        Manage and view all customer bookings
-                    </p>
+                    <div>
+                        <h1 className="text-4xl font-bold text-gray-900 mb-2">
+                            📋 Bookings Management
+                        </h1>
+                        <p className="text-gray-600">
+                            Manage and view all customer bookings
+                        </p>
+                    </div>
+                    <Button
+                        onClick={() => setIsCreateModalOpen(true)}
+                        className="bg-[#D4AF37] hover:bg-[#b8962e] text-white"
+                    >
+                        + Create Booking
+                    </Button>
                 </motion.div>
 
                 {/* Filters */}
@@ -206,7 +241,9 @@ export default function BookingsPage() {
                                                 </div>
                                                 <div className="text-sm text-[#D4AF37] font-bold mt-1">
                                                     IDR{" "}
-                                                    {(booking.tourPrice! / 1000000).toFixed(1)}M
+                                                    {booking.totalPrice
+                                                        ? (booking.totalPrice / 1000000).toFixed(1) + "M"
+                                                        : (booking.tourPrice! / 1000000).toFixed(1) + "M (pax)"}
                                                 </div>
                                             </>
                                         ) : (
@@ -248,6 +285,12 @@ export default function BookingsPage() {
                     </div>
                 )}
             </div>
+
+            <CreateBookingModal
+                isOpen={isCreateModalOpen}
+                onClose={() => setIsCreateModalOpen(false)}
+                onSuccess={fetchBookings}
+            />
         </div>
     );
 }

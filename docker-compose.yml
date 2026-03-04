@@ -6,17 +6,17 @@ services:
     build:
       context: ./server
       dockerfile: Dockerfile
-    container_name: uprev_backend
+    container_name: backend
     restart: unless-stopped
     ports:
-      - "8000:8000"
+      - "8000:8000" # Exposed for existing Nginx Proxy Manager
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/uprev_db
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
       - LANGSMITH_TRACING=${LANGSMITH_TRACING}
       - LANGSMITH_API_KEY=${LANGSMITH_API_KEY}
       - LANGSMITH_PROJECT=${LANGSMITH_PROJECT}
-      - ALLOWED_ORIGINS=*
+      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS}
       - COMPANY_WHATSAPP=${COMPANY_WHATSAPP}
       - LOG_LEVEL=${LOG_LEVEL:-INFO}
     depends_on:
@@ -30,10 +30,10 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: uprev_frontend
+    container_name: frontend
     restart: unless-stopped
     ports:
-      - "3001:3000"
+      - "3001:3000" # Exposed for existing Nginx Proxy Manager
     environment:
       - BACKEND_URL=http://backend:8000
     depends_on:
@@ -44,7 +44,7 @@ services:
   # PostgreSQL Database (Moved from server/docker-compose.yml)
   db:
     image: pgvector/pgvector:pg16
-    container_name: uprev_postgres
+    container_name: postgres
     restart: unless-stopped
     environment:
       POSTGRES_USER: postgres

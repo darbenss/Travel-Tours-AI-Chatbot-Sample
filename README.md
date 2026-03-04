@@ -69,9 +69,16 @@ docker-compose up --build
 ```
 
 This will start:
--   **Frontend**: http://localhost:3001
--   **Backend API**: http://localhost:8000
+-   **Main App (Nginx)**: http://localhost:3001 (or https://uprev.id in production)
+-   **Frontend (Direct)**: http://localhost:3000
+-   **Frontend**: Internal (proxied via Nginx)
+-   **Backend API**: Internal (proxied via Nginx at `/api`)
 -   **PostgreSQL**: Port 5433 (mapped to 5432 internal)
+
+### Port Isolation
+The app uses a dedicated Nginx container (`uprev_nginx`) to handle traffic.
+-   Host Port `3001` -> Nginx -> Frontend/Backend
+-   This avoids conflict with other apps running on ports 80/81.
 
 ### 4. Seed Data 🌱
 

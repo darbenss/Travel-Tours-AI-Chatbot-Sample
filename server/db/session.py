@@ -5,6 +5,7 @@ from sqlalchemy import create_engine, text
 from contextlib import contextmanager
 from config import get_settings
 from models.database import Base
+from typing import Generator
 
 settings = get_settings()
 
@@ -49,10 +50,10 @@ def get_db() -> Session:
         db.close()
 
 
-def get_db_session() -> Session:
+def get_db_session() -> Generator[Session, None, None]:
     """Get database session for dependency injection"""
     db = SessionLocal()
     try:
-        return db
+        yield db
     finally:
-        pass  # Will be closed by FastAPI
+        db.close()

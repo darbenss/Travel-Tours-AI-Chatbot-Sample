@@ -20,7 +20,8 @@ class BookingService:
         package_id: str,
         customer_name: str,
         whatsapp_number: str,
-        num_travelers: Optional[int] = None
+        num_travelers: Optional[int] = None,
+        user_id: Optional[str] = None
     ) -> Dict:
         """Create a new booking and generate WhatsApp link"""
         
@@ -41,22 +42,28 @@ class BookingService:
         # Generate booking ID
         booking_id = generate_uuid()
         
+        # Calculate total price
+        total_price = package.price * (num_travelers or 1)
+        
         # Generate WhatsApp link
         whatsapp_link = self._generate_whatsapp_link(
             package=package,
             customer_name=customer_name,
             whatsapp_number=whatsapp_number,
             booking_id=booking_id,
-            num_travelers=num_travelers
+            num_travelers=num_travelers,
+            total_price=total_price
         )
         
         # Create booking record
         booking = Booking(
             booking_id=booking_id,
             package_id=package_id,
+            user_id=user_id,
             customer_name=customer_name,
             whatsapp_number=whatsapp_number,
             num_travelers=num_travelers,
+            total_price=total_price,
             status='PENDING',
             whatsapp_link=whatsapp_link,
             created_at=datetime.utcnow()
@@ -66,8 +73,9 @@ class BookingService:
         self.db.commit()
         
         # Construct short link (redirect endpoint)
-        # In production this should use the actual domain
-        short_link = f"http://127.0.0.1:8000/api/wa/{booking_id}"
+        # Use APP_URL from settings (defaults to localhost:3000)
+        base_url = settings.app_url
+        short_link = f"{base_url}/api/wa/{booking_id}"
         
         return {
             "success": True,
@@ -83,7 +91,8 @@ class BookingService:
         customer_name: str,
         whatsapp_number: str,
         num_travelers: int,
-        booking_id: str
+        booking_id: str,
+        total_price: float
     ) -> str:
         """Generate pre-filled WhatsApp link"""
         
@@ -95,7 +104,7 @@ class BookingService:
 - *Nama*: {customer_name}
 - *Pax*: {num_travelers}
 - *WhatsApp Saya*: {whatsapp_number}
-- *Harga*: IDR {package.price:,.0f}
+- *Total Harga*: IDR {total_price:,.0f} (IDR {package.price:,.0f}/pax)
 - *Destinasi*: {package.destination}
 
 Mohon bantuannya untuk melanjutkan proses booking. Terima kasih!"""
@@ -130,6 +139,31 @@ Mohon bantuannya untuk melanjutkan proses booking. Terima kasih!"""
                 "status": booking.status,
                 "created_at": booking.created_at,
                 "num_travelers": booking.num_travelers,
+                "total_price": float(booking.total_price) if booking.total_price else None,
+                "package_title": package.title,
+                "package_destination": package.destination,
+                "package_price": float(package.price)
+            })
+            
+        return bookings_list
+
+    def get_user_bookings(self, user_id: str):
+        """Get bookings for a specific user"""
+        results = self.db.query(Booking, Package).join(
+            Package, Booking.package_id == Package.id
+        ).filter(Booking.user_id == user_id).order_by(Booking.created_at.desc()).all()
+        
+        bookings_list = []
+        for booking, package in results:
+            bookings_list.append({
+                "booking_id": booking.booking_id,
+                "customer_name": booking.customer_name,
+                "whatsapp_number": booking.whatsapp_number,
+                "package_id": booking.package_id,
+                "status": booking.status,
+                "created_at": booking.created_at,
+                "num_travelers": booking.num_travelers,
+                "total_price": float(booking.total_price) if booking.total_price else None,
                 "package_title": package.title,
                 "package_destination": package.destination,
                 "package_price": float(package.price)

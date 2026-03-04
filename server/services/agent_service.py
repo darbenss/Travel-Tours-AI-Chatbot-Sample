@@ -65,14 +65,15 @@ ALUR PERCAKAPAN:
 JANGAN PERNAH MENYEBUT "tools", "function", atau "JSON" kepada user.
 """
 
+from contextvars import ContextVar
+
 # Global database session holder (will be set per request)
-_db_session = None
+_db_session: ContextVar[Session | None] = ContextVar("db_session", default=None)
 
 
-def set_db_session(db: Session):
+def set_db_session(db: Session | None):
     """Set the database session for the current request"""
-    global _db_session
-    _db_session = db
+    _db_session.set(db)
 
 
 @tool
@@ -86,10 +87,11 @@ def search_packages(query: str, max_results: int = 3) -> str:
     Returns:
         JSON string dari paket yang cocok
     """
-    if not _db_session:
+    db = _db_session.get()
+    if not db:
         return json.dumps({"error": "Database session not available"}, ensure_ascii=False)
     
-    search_service = SearchService(_db_session)
+    search_service = SearchService(db)
     results = search_service.search_hybrid(query, limit=max_results)
     results_dict = [pkg.to_dict() for pkg in results]
     return json.dumps(results_dict, ensure_ascii=False)
@@ -115,11 +117,12 @@ def create_booking(
         Agent MUST use the 'whatsapp_link' from this JSON response.
         DO NOT generate your own link.
     """
-    if not _db_session:
+    db = _db_session.get()
+    if not db:
         return json.dumps({"error": "Database session not available"}, ensure_ascii=False)
     
     try:
-        booking_service = BookingService(_db_session)
+        booking_service = BookingService(db)
         result = booking_service.create_booking(
             package_id=package_id,
             customer_name=customer_name,
@@ -139,7 +142,7 @@ llm = ChatOpenAI(
     openai_api_key=settings.openrouter_api_key,
     openai_api_base="https://openrouter.ai/api/v1",
     default_headers={
-        "HTTP-Referer": "http://localhost:3001",
+        "HTTP-Referer": settings.app_url,
         "X-Title": "UpRev AI Sales Agent",
     }
 )
