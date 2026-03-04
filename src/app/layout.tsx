@@ -18,8 +18,14 @@ export const metadata: Metadata = {
   title: "UpRev Tours - Seamless Luxury & Trusted Exploration",
   description: "Experience the world with Indonesia's most trusted travel partner since 1971.",
   icons: {
-    icon: "UpRev.png",
+    icon: [
+      { url: "/favicon/favicon.ico", sizes: "any" },
+      { url: "/favicon/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon/favicon-96x96.png", sizes: "96x96", type: "image/png" },
+    ],
+    apple: "/favicon/apple-touch-icon.png",
   },
+  manifest: "/favicon/site.webmanifest",
 };
 
 export default function RootLayout({
