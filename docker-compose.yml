@@ -20,7 +20,7 @@ services:
       - COMPANY_WHATSAPP=${COMPANY_WHATSAPP}
       - LOG_LEVEL=${LOG_LEVEL:-INFO}
     depends_on:
-      db:
+      db3:
         condition: service_healthy
     networks:
       - stargaze-network
@@ -37,7 +37,7 @@ services:
     environment:
       - BACKEND_URL=http://backend3:8000
     depends_on:
-      - backend
+      - backend3
     networks:
       - stargaze-network
 
@@ -50,8 +50,6 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: uprev_db
-    ports:
-      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
