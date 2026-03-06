@@ -82,7 +82,7 @@ class SearchService:
         # Try exact match first
         exact_results = self.search_exact(query, limit=10)
         
-        if len(exact_results) >= 3:
+        if len(exact_results) >= 1:
             # Enough exact results, return them
             results = exact_results[:limit]
         else:

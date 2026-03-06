@@ -2,14 +2,14 @@ version: '3.8'
 
 services:
   # Python Backend
-  backend:
+  backend3:
     build:
       context: ./server
       dockerfile: Dockerfile
     container_name: backend
+    env_file:
+      - .env
     restart: unless-stopped
-    ports:
-      - "8000:8000" # Exposed for existing Nginx Proxy Manager
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/uprev_db
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
@@ -23,26 +23,26 @@ services:
       db:
         condition: service_healthy
     networks:
-      - app-network
+      - stargaze-network
 
   # Next.js Frontend
-  frontend:
+  frontend3:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: frontend
     restart: unless-stopped
-    ports:
-      - "3001:3000" # Exposed for existing Nginx Proxy Manager
+    env_file:
+      - .env
     environment:
-      - BACKEND_URL=http://backend:8000
+      - BACKEND_URL=http://backend3:8000
     depends_on:
       - backend
     networks:
-      - app-network
+      - stargaze-network
 
   # PostgreSQL Database (Moved from server/docker-compose.yml)
-  db:
+  db3:
     image: pgvector/pgvector:pg16
     container_name: postgres
     restart: unless-stopped
@@ -60,11 +60,11 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      - app-network
+      - stargaze-network
 
 networks:
-  app-network:
-    driver: bridge
+  stargaze-network:
+    external: true
 
 volumes:
   postgres_data:
