@@ -2,11 +2,11 @@ version: '3.8'
 
 services:
   # Python Backend
-  backend3:
+  backend:
     build:
       context: ./server
       dockerfile: Dockerfile
-    container_name: backend
+    container_name: backend3
     env_file:
       - .env
     restart: unless-stopped
@@ -20,31 +20,31 @@ services:
       - COMPANY_WHATSAPP=${COMPANY_WHATSAPP}
       - LOG_LEVEL=${LOG_LEVEL:-INFO}
     depends_on:
-      db3:
+      db:
         condition: service_healthy
     networks:
       - stargaze-network
 
   # Next.js Frontend
-  frontend3:
+  frontend:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: frontend
+    container_name: frontend3
     restart: unless-stopped
     env_file:
       - .env
     environment:
-      - BACKEND_URL=http://backend3:8000
+      - BACKEND_URL=http://backend:8000
     depends_on:
-      - backend3
+      - backend
     networks:
       - stargaze-network
 
   # PostgreSQL Database (Moved from server/docker-compose.yml)
-  db3:
+  db:
     image: pgvector/pgvector:pg16
-    container_name: postgres
+    container_name: db3
     restart: unless-stopped
     environment:
       POSTGRES_USER: postgres
